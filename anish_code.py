@@ -94,3 +94,52 @@ def correlation_and_scattermatrix(df):
     plt.show()
 
     return
+
+#cluster number to calculate based on silhouette score
+
+
+def cluster_number(df, df_normalised):
+    '''
+    This function calculates the best number of clusters based on silhouette
+    score
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Actual data.
+    df_normalised : pandas.DataFrame
+        Normalised data.
+
+    Returns
+    -------
+    INT
+        Best cluster number.
+
+    '''
+
+    clusters = []
+    scores = []
+    # loop over number of clusters
+    for ncluster in range(2, 10):
+
+        # Setting up clusters over number of clusters
+        kmeans = cluster.KMeans(n_clusters=ncluster)
+
+        # Cluster fitting
+        kmeans.fit(df_normalised)
+        lab = kmeans.labels_
+
+        # Silhoutte score over number of clusters
+        print(ncluster, skmet.silhouette_score(df, lab))
+
+        clusters.append(ncluster)
+        scores.append(skmet.silhouette_score(df, lab))
+
+    clusters = np.array(clusters)
+    scores = np.array(scores)
+
+    best_ncluster = clusters[scores == np.max(scores)]
+    print()
+    print('best n clusters', best_ncluster[0])
+
+    return best_ncluster[0]
